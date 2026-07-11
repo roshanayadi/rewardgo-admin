@@ -51,8 +51,8 @@ try {
     fs.unlinkSync('dist.zip');
   }
   
-  // Use native PowerShell Compress-Archive on Windows
-  execSync('powershell -Command "Compress-Archive -Path dist\\* -DestinationPath dist.zip"', { stdio: 'inherit' });
+  // Use native tar tool on Windows/Linux to avoid backslash path issues on Linux server
+  execSync('tar -a -c -f dist.zip -C dist .', { stdio: 'inherit' });
 
   console.log('\nStep 4: Uploading dist.zip to cPanel FTP...');
   const ftpUrl = `ftp://${FTP_HOST}/dist.zip`;
