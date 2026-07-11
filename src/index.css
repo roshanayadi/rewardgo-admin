@@ -1,0 +1,138 @@
+@import 'tailwindcss';
+
+/* Dark mode via a `.dark` class on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * RewardGo Admin design tokens.
+ * Primary = Red #DC2626, white background, clean neutral surfaces.
+ */
+@theme {
+  --color-primary: #dc2626;
+  --color-primary-foreground: #ffffff;
+  --color-primary-50: #fef2f2;
+  --color-primary-100: #fee2e2;
+  --color-primary-200: #fecaca;
+  --color-primary-300: #fca5a5;
+  --color-primary-400: #f87171;
+  --color-primary-500: #ef4444;
+  --color-primary-600: #dc2626;
+  --color-primary-700: #b91c1c;
+  --color-primary-800: #991b1b;
+  --color-primary-900: #7f1d1d;
+
+  --radius-card: 1rem;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+:root {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --border: #e5e7eb;
+  --text: #0f172a;
+  --text-muted: #64748b;
+}
+
+.dark {
+  --bg: #0b1120;
+  --surface: #111827;
+  --border: #1f2937;
+  --text: #e5e7eb;
+  --text-muted: #94a3b8;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+/* ---- Animations (login / interactive UI) ---- */
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes pulseGlow {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.15);
+  }
+}
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.animate-floaty {
+  animation: floaty 5s ease-in-out infinite;
+}
+.animate-fade-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.animate-glow {
+  animation: pulseGlow 6s ease-in-out infinite;
+}
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 12s ease infinite;
+}
+
+/* Theme-aware utility shortcuts backed by CSS vars */
+@utility surface {
+  background-color: var(--surface);
+}
+@utility text-body {
+  color: var(--text);
+}
+@utility text-dim {
+  color: var(--text-muted);
+}
+@utility border-base {
+  border-color: var(--border);
+}
