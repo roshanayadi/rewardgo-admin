@@ -1,0 +1,57 @@
+name: Deploy Admin Panel
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy via FTP
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Fetch latest code from Git
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # 3. Install dependencies
+      - name: Install Dependencies
+        run: npm ci
+
+      # 4. Compile React App (Vite Build)
+      - name: Build Project
+        run: npm run build
+        env:
+          VITE_API_URL: https://api.rewardgo.hamrotayari.com/api/v1
+
+      # 5. Add SPA .htaccess fallback inside dist/
+      - name: Setup routing fallback (.htaccess)
+        run: |
+          echo "<IfModule mod_rewrite.c>
+            RewriteEngine On
+            RewriteBase /
+            RewriteRule ^index\.html$ - [L]
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule . /index.html [L]
+          </IfModule>" > dist/.htaccess
+
+      # 6. Deploy to cPanel FTP Server
+      - name: Sync FTP Files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          # Change server-dir to your actual cPanel target directory path
+          # Example: /public_html/admin/ or /admin.rewardgo.hamrotayari.com/
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
