@@ -46,17 +46,17 @@ try {
 </IfModule>`;
   fs.writeFileSync(path.join('dist', '.htaccess'), htaccess);
 
-  console.log('\nStep 3: Compressing build outputs...');
-  if (fs.existsSync('dist.zip')) {
-    fs.unlinkSync('dist.zip');
+  console.log('\nStep 3: Compressing build outputs into tarball...');
+  if (fs.existsSync('dist.tar')) {
+    fs.unlinkSync('dist.tar');
   }
   
-  // Use native tar tool on Windows/Linux to avoid backslash path issues on Linux server
-  execSync('tar -a -c -f dist.zip -C dist .', { stdio: 'inherit' });
+  // Use native tar tool to create a standard tar file
+  execSync('tar -cf dist.tar -C dist .', { stdio: 'inherit' });
 
-  console.log('\nStep 4: Uploading dist.zip to cPanel FTP...');
-  const ftpUrl = `ftp://${FTP_HOST}/dist.zip`;
-  execSync(`curl -T dist.zip "${ftpUrl}" --user "${FTP_USER}:${FTP_PASS}"`, { stdio: 'inherit' });
+  console.log('\nStep 4: Uploading dist.tar to cPanel FTP...');
+  const ftpUrl = `ftp://${FTP_HOST}/dist.tar`;
+  execSync(`curl -T dist.tar "${ftpUrl}" --user "${FTP_USER}:${FTP_PASS}"`, { stdio: 'inherit' });
 
   console.log('\nStep 5: Triggering extraction on server...');
   const triggerUrl = `https://rewardgoadmin.hamrotayari.com/unzip.php?key=${UNZIP_KEY}`;
@@ -65,9 +65,9 @@ try {
   const response = execSync(`curl -s "${triggerUrl}"`).toString().trim();
   console.log(`Server Response: ${response}`);
 
-  // Cleanup local zip
-  if (fs.existsSync('dist.zip')) {
-    fs.unlinkSync('dist.zip');
+  // Cleanup local tar
+  if (fs.existsSync('dist.tar')) {
+    fs.unlinkSync('dist.tar');
   }
 
   console.log('\n🎉 Deployment Completed Successfully! Site is Live.');
