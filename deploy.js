@@ -51,8 +51,8 @@ try {
     fs.unlinkSync('dist.tar');
   }
   
-  // Use native tar tool to create a standard tar file
-  execSync('tar -cf dist.tar -C dist .', { stdio: 'inherit' });
+  // Use native tar tool to create a standard tar file (excluding root dot entry)
+  execSync('tar -cf dist.tar -C dist *', { stdio: 'inherit' });
 
   console.log('\nStep 4: Uploading dist.tar to cPanel FTP...');
   const ftpUrl = `ftp://${FTP_HOST}/dist.tar`;
