@@ -15,7 +15,10 @@ const UserDetailPage = lazy(() => import('@/pages/Users/UserDetailPage'))
 const AccessControlPage = lazy(() => import('@/pages/AccessControl/AccessControlPage'))
 const TasksPage = lazy(() => import('@/pages/Tasks/TasksPage'))
 const OfferwallsPage = lazy(() => import('@/pages/Offerwalls/OfferwallsPage'))
+const PromoCodesPage = lazy(() => import('@/pages/PromoCodes/PromoCodesPage'))
+const EventsPage = lazy(() => import('@/pages/Events/EventsPage'))
 const ReferralsPage = lazy(() => import('@/pages/Referrals/ReferralsPage'))
+const LeaderboardPage = lazy(() => import('@/pages/Leaderboard/LeaderboardPage'))
 const SupportPage = lazy(() => import('@/pages/Support/SupportPage'))
 const WalletPage = lazy(() => import('@/pages/Wallet/WalletPage'))
 const WithdrawalMethodsPage = lazy(() => import('@/pages/WithdrawalMethods/WithdrawalMethodsPage'))
@@ -29,6 +32,8 @@ const AppManagerPage = lazy(() => import('@/pages/AppManager/AppManagerPage'))
 const SettingsPage = lazy(() => import('@/pages/Settings/SettingsPage'))
 const ProfilePage = lazy(() => import('@/pages/Profile/ProfilePage'))
 const SystemPage = lazy(() => import('@/pages/System/SystemPage'))
+const AuditLogsPage = lazy(() => import('@/pages/AuditLogs/AuditLogsPage'))
+const FraudPage = lazy(() => import('@/pages/Fraud/FraudPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 function PageLoader() {
@@ -73,7 +78,10 @@ export default function App() {
             <Route path="/permissions" element={<Navigate to="/access-control" replace />} />
             <Route path="/tasks" element={<TasksPage />} />
             <Route path="/offerwalls" element={<OfferwallsPage />} />
+            <Route path="/promo-codes" element={<PromoCodesPage />} />
+            <Route path="/events" element={<EventsPage />} />
             <Route path="/referrals" element={<ReferralsPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="/wallet" element={<WalletPage />} />
             <Route path="/withdrawals" element={<WithdrawalsPage />} />
@@ -87,6 +95,8 @@ export default function App() {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/system" element={<SystemPage />} />
+            <Route path="/audit-logs" element={<AuditLogsPage />} />
+            <Route path="/fraud" element={<FraudPage />} />
           </Route>
         </Route>
 

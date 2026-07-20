@@ -33,6 +33,8 @@ export const permissionsApi = createCrudApi<Permission>('permissions')
 export const usersExtraApi = {
   updateStatus: (payload: { user_id?: number; ids?: number[]; status: string }) =>
     api.patch('/admin/users/status', payload),
+  adjustCoins: (id: number, payload: { amount: number; type: 'add' | 'deduct'; note?: string }) =>
+    api.post(`/admin/users/${id}/adjust-coins`, payload),
 }
 
 /* Dashboard */
@@ -122,4 +124,51 @@ export const systemApi = {
   statistics: () => unwrap<Record<string, number>>(api.get('/admin/system/statistics')),
   logs: (lines = 100) => unwrap<{ lines: string[] }>(api.get('/admin/system/logs', { params: { lines } })),
   activityLogs: (params?: ListParams) => unwrapList<any>(api.get('/admin/system/activity-logs', { params })),
+}
+
+/* Leaderboard */
+export interface LeaderboardEntry {
+  rank: number
+  user_id: number
+  name: string
+  avatar: string | null
+  coins: number
+}
+export const leaderboardApi = {
+  list: (period: 'all' | 'week' | 'month' = 'all') =>
+    unwrap<{ period: string; leaders: LeaderboardEntry[]; me: LeaderboardEntry | null }>(
+      api.get('/admin/leaderboard', { params: { period } }),
+    ),
+}
+
+/* Promo codes */
+export const promoCodesApi = {
+  ...createCrudApi<import('@/types').PromoCode>('promo-codes'),
+  usages: (id: number, params?: ListParams) =>
+    unwrapList<any>(api.get(`/admin/promo-codes/${id}/usages`, { params })),
+}
+
+/* Audit logs */
+export const auditLogsApi = {
+  list: (params?: ListParams & { action?: string; from?: string; to?: string }) =>
+    unwrapList<any>(api.get('/admin/audit-logs', { params })),
+  actions: () => unwrap<string[]>(api.get('/admin/audit-logs/actions')),
+  export: (params?: Record<string, unknown>) =>
+    unwrap<any[]>(api.get('/admin/audit-logs/export', { params })),
+}
+
+/* Events & campaigns */
+export const eventsApi = createCrudApi<import('@/types').AppEvent>('events')
+
+/* Fraud detection */
+export const fraudApi = {
+  dashboard: () => unwrap<Record<string, number>>(api.get('/admin/fraud/dashboard')),
+  suspicious: (params?: ListParams) => unwrapList<any>(api.get('/admin/fraud/suspicious', { params })),
+  events: (userId: number) => unwrap<any>(api.get(`/admin/fraud/users/${userId}/events`)),
+  clear: (userId: number) => api.post(`/admin/fraud/users/${userId}/clear`),
+  devices: (params?: ListParams & { fingerprint?: string; ip?: string }) =>
+    unwrapList<any>(api.get('/admin/fraud/devices', { params })),
+  ipList: () => unwrap<any[]>(api.get('/admin/fraud/ip-blacklist')),
+  ipAdd: (ip: string, reason?: string) => api.post('/admin/fraud/ip-blacklist', { ip, reason }),
+  ipRemove: (id: number) => api.delete(`/admin/fraud/ip-blacklist/${id}`),
 }

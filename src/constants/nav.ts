@@ -4,6 +4,8 @@ import {
   ShieldCheck,
   ListChecks,
   LayoutGrid,
+  Ticket,
+  Zap,
   SlidersHorizontal,
   Wallet,
   Banknote,
@@ -15,8 +17,11 @@ import {
   Image,
   Settings,
   Server,
+  ScrollText,
+  ShieldAlert,
   Share2,
   LifeBuoy,
+  Trophy,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -36,6 +41,8 @@ export const NAV_ITEMS: NavItem[] = [
 
   { label: 'Tasks', to: '/tasks', icon: ListChecks, permission: 'tasks.view', group: 'Earning' },
   { label: 'Offerwalls', to: '/offerwalls', icon: LayoutGrid, permission: 'offerwalls.view', group: 'Earning' },
+  { label: 'Promo Codes', to: '/promo-codes', icon: Ticket, permission: 'settings.view', group: 'Earning' },
+  { label: 'Events', to: '/events', icon: Zap, permission: 'settings.view', group: 'Earning' },
 
   { label: 'Referrals', to: '/referrals', icon: Share2, permission: 'users.view', group: 'Management' },
 
@@ -49,10 +56,13 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Advertisements', to: '/advertisements', icon: Megaphone, permission: 'advertisements.view', group: 'Content' },
   { label: 'Banners', to: '/banners', icon: Image, permission: 'banners.view', group: 'Content' },
 
+  { label: 'Leaderboard', to: '/leaderboard', icon: Trophy, permission: 'reports.view', group: 'Insights' },
   { label: 'Reports', to: '/reports', icon: BarChart3, permission: 'reports.view', group: 'Insights' },
   { label: 'App Manager', to: '/app-manager', icon: SlidersHorizontal, permission: 'settings.view', group: 'System' },
   { label: 'Settings', to: '/settings', icon: Settings, permission: 'settings.view', group: 'System' },
   { label: 'System', to: '/system', icon: Server, permission: 'system.view', group: 'System' },
+  { label: 'Fraud Detection', to: '/fraud', icon: ShieldAlert, permission: 'users.view', group: 'System' },
+  { label: 'Audit Logs', to: '/audit-logs', icon: ScrollText, permission: 'system.view', group: 'System' },
 ]
 
 export const NAV_GROUPS = ['Main', 'Management', 'Earning', 'Finance', 'Content', 'Insights', 'System']
