@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Plus, Pencil, Trash2, X } from 'lucide-react'
-import { withdrawalMethodsApi } from '@/api/services'
+import { withdrawalMethodsApi, countriesApi } from '@/api/services'
 import { useResourceList } from '@/hooks/useResourceList'
 import { useCrud } from '@/hooks/useCrud'
 import { DataTable } from '@/components/tables/DataTable'
@@ -26,6 +27,7 @@ type FormState = {
   sort_order: number
   instructions: string
   fields: MethodField[]
+  countries: string[]
 }
 
 const blank: FormState = {
@@ -39,10 +41,12 @@ const blank: FormState = {
   sort_order: 0,
   instructions: '',
   fields: [],
+  countries: [],
 }
 
 export default function WithdrawalMethodsPage() {
   const list = useResourceList<WithdrawalMethod>('withdrawal-methods', (p) => withdrawalMethodsApi.list(p))
+  const { data: allCountries } = useQuery({ queryKey: ['countries'], queryFn: countriesApi.list })
   const crud = useCrud<WithdrawalMethod>('withdrawal-methods', withdrawalMethodsApi, 'Method')
 
   const [open, setOpen] = useState(false)
@@ -70,6 +74,7 @@ export default function WithdrawalMethodsPage() {
       sort_order: m.sort_order,
       instructions: m.instructions ?? '',
       fields: m.fields ?? [],
+      countries: (m as any).countries ?? [],
     })
     setOpen(true)
   }
@@ -95,6 +100,8 @@ export default function WithdrawalMethodsPage() {
       fields: form.fields
         .filter((f) => f.label)
         .map((f) => ({ ...f, key: f.key || autoKey(f.label) })),
+      // empty selection = available in every country
+      countries: form.countries.length ? form.countries : null,
     }
     const done = () => setOpen(false)
     if (editing) crud.update.mutate({ id: editing.id, payload }, { onSuccess: done })
@@ -130,6 +137,27 @@ export default function WithdrawalMethodsPage() {
         },
       },
       { header: 'Fields', cell: ({ row }) => <Badge tone="blue">{row.original.fields?.length ?? 0} fields</Badge> },
+      {
+        header: 'Countries',
+        cell: ({ row }) => {
+          const cs = (row.original as any).countries as string[] | null
+          if (!cs || cs.length === 0) return <Badge tone="green">Global</Badge>
+          return (
+            <div className="flex items-center gap-1">
+              {cs.slice(0, 4).map((c) => (
+                <img
+                  key={c}
+                  src={`https://flagcdn.com/w20/${c.toLowerCase()}.png`}
+                  alt={c}
+                  title={c}
+                  className="h-3.5 w-5 rounded-[2px] object-cover"
+                />
+              ))}
+              {cs.length > 4 && <span className="text-xs text-slate-400">+{cs.length - 4}</span>}
+            </div>
+          )
+        },
+      },
       { header: 'Status', cell: ({ row }) => <StatusBadge status={row.original.status} /> },
       {
         header: 'Action',
@@ -214,6 +242,47 @@ export default function WithdrawalMethodsPage() {
               <div className="col-span-2">
                 <Label>Instructions (optional)</Label>
                 <Textarea rows={2} value={form.instructions} onChange={(e) => set('instructions', e.target.value)} placeholder="Shown to the user on the withdrawal form" />
+              </div>
+            </div>
+
+            {/* Country availability */}
+            <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+              <div className="mb-3">
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Available Countries</p>
+                <p className="text-xs text-slate-400">
+                  Leave empty for all countries. Selected: {form.countries.length === 0 ? 'Global' : form.countries.join(', ')}
+                </p>
+              </div>
+              <div className="grid max-h-44 grid-cols-2 gap-1 overflow-y-auto sm:grid-cols-3">
+                {(allCountries ?? [])
+                  .filter((c: any) => c.is_supported)
+                  .map((c: any) => {
+                    const on = form.countries.includes(c.code)
+                    return (
+                      <button
+                        key={c.code}
+                        type="button"
+                        onClick={() =>
+                          set(
+                            'countries',
+                            on ? form.countries.filter((x) => x !== c.code) : [...form.countries, c.code],
+                          )
+                        }
+                        className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs transition ${
+                          on
+                            ? 'bg-primary-50 font-semibold text-primary dark:bg-primary/10'
+                            : 'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800'
+                        }`}
+                      >
+                        <img
+                          src={`https://flagcdn.com/w20/${c.code.toLowerCase()}.png`}
+                          alt=""
+                          className="h-3 w-4.5 rounded-[2px] object-cover"
+                        />
+                        <span className="truncate">{c.name}</span>
+                      </button>
+                    )
+                  })}
               </div>
             </div>
 
