@@ -15,6 +15,7 @@ import {
   BarChart3,
   Megaphone,
   Image,
+  FileText,
   Settings,
   Server,
   ScrollText,
@@ -55,6 +56,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Support Tickets', to: '/support', icon: LifeBuoy, permission: 'support.view', group: 'Content' },
   { label: 'Advertisements', to: '/advertisements', icon: Megaphone, permission: 'advertisements.view', group: 'Content' },
   { label: 'Banners', to: '/banners', icon: Image, permission: 'banners.view', group: 'Content' },
+  { label: 'CMS Pages', to: '/cms-pages', icon: FileText, permission: 'settings.view', group: 'Content' },
 
   { label: 'Leaderboard', to: '/leaderboard', icon: Trophy, permission: 'reports.view', group: 'Insights' },
   { label: 'Reports', to: '/reports', icon: BarChart3, permission: 'reports.view', group: 'Insights' },

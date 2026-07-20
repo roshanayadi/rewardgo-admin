@@ -172,3 +172,13 @@ export const fraudApi = {
   ipAdd: (ip: string, reason?: string) => api.post('/admin/fraud/ip-blacklist', { ip, reason }),
   ipRemove: (id: number) => api.delete(`/admin/fraud/ip-blacklist/${id}`),
 }
+
+/* CMS pages */
+export const cmsApi = {
+  list: () => unwrap<import('@/types').CmsPage[]>(api.get('/admin/cms-pages')),
+  create: (payload: Partial<import('@/types').CmsPage>) =>
+    unwrap<import('@/types').CmsPage>(api.post('/admin/cms-pages', payload)),
+  update: (id: number, payload: Partial<import('@/types').CmsPage>) =>
+    unwrap<import('@/types').CmsPage>(api.put(`/admin/cms-pages/${id}`, payload)),
+  remove: (id: number) => api.delete(`/admin/cms-pages/${id}`),
+}

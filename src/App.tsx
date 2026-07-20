@@ -27,6 +27,7 @@ const TransactionsPage = lazy(() => import('@/pages/Transactions/TransactionsPag
 const NotificationsPage = lazy(() => import('@/pages/Notifications/NotificationsPage'))
 const AdvertisementsPage = lazy(() => import('@/pages/Advertisements/AdvertisementsPage'))
 const BannersPage = lazy(() => import('@/pages/Banners/BannersPage'))
+const CmsPagesPage = lazy(() => import('@/pages/Cms/CmsPagesPage'))
 const ReportsPage = lazy(() => import('@/pages/Reports/ReportsPage'))
 const AppManagerPage = lazy(() => import('@/pages/AppManager/AppManagerPage'))
 const SettingsPage = lazy(() => import('@/pages/Settings/SettingsPage'))
@@ -90,6 +91,7 @@ export default function App() {
             <Route path="/notifications" element={<NotificationsPage />} />
             <Route path="/advertisements" element={<AdvertisementsPage />} />
             <Route path="/banners" element={<BannersPage />} />
+            <Route path="/cms-pages" element={<CmsPagesPage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/app-manager" element={<AppManagerPage />} />
             <Route path="/settings" element={<SettingsPage />} />

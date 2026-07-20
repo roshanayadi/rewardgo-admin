@@ -359,3 +359,41 @@ export interface Game {
   reward_rules: RewardRule[]
   created_at: string
 }
+
+export interface PromoCode {
+  id: number
+  code: string
+  title: string | null
+  coins: number
+  usage_limit: number | null
+  per_user_limit: number
+  expires_at: string | null
+  is_active: boolean
+  usages_count?: number
+  created_at: string
+}
+
+export interface AppEvent {
+  id: number
+  name: string
+  description: string | null
+  banner_image: string | null
+  multiplier: number
+  sources: string[] | null
+  starts_at: string
+  ends_at: string
+  is_active: boolean
+  is_running?: boolean
+  created_at: string
+}
+
+export interface CmsPage {
+  id: number
+  slug: string
+  title: string
+  body: string
+  is_published: boolean
+  updated_by: number | null
+  updated_at: string
+  created_at: string
+}
