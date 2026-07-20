@@ -22,6 +22,7 @@ import {
   ShieldAlert,
   DatabaseBackup,
   Activity,
+  Globe2,
   Share2,
   LifeBuoy,
   Trophy,
@@ -62,6 +63,7 @@ export const NAV_ITEMS: NavItem[] = [
 
   { label: 'Leaderboard', to: '/leaderboard', icon: Trophy, permission: 'reports.view', group: 'Insights' },
   { label: 'Reports', to: '/reports', icon: BarChart3, permission: 'reports.view', group: 'Insights' },
+  { label: 'Countries', to: '/countries', icon: Globe2, permission: 'settings.view', group: 'System' },
   { label: 'App Manager', to: '/app-manager', icon: SlidersHorizontal, permission: 'settings.view', group: 'System' },
   { label: 'Settings', to: '/settings', icon: Settings, permission: 'settings.view', group: 'System' },
   { label: 'System', to: '/system', icon: Server, permission: 'system.view', group: 'System' },

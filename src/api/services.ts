@@ -204,3 +204,12 @@ export const apiMonitorApi = {
     unwrap<any[]>(api.get('/admin/api-monitor/timeline', { params: { hours } })),
   prune: () => api.post('/admin/api-monitor/prune'),
 }
+
+/* Countries */
+export const countriesApi = {
+  list: () => unwrap<any[]>(api.get('/admin/countries')),
+  create: (payload: Record<string, unknown>) => unwrap<any>(api.post('/admin/countries', payload)),
+  update: (id: number, payload: Record<string, unknown>) =>
+    unwrap<any>(api.put(`/admin/countries/${id}`, payload)),
+  remove: (id: number) => api.delete(`/admin/countries/${id}`),
+}
