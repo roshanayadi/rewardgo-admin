@@ -182,3 +182,12 @@ export const cmsApi = {
     unwrap<import('@/types').CmsPage>(api.put(`/admin/cms-pages/${id}`, payload)),
   remove: (id: number) => api.delete(`/admin/cms-pages/${id}`),
 }
+
+/* Backups */
+export const backupsApi = {
+  list: () => unwrap<any[]>(api.get('/admin/backups')),
+  create: () => unwrap<any>(api.post('/admin/backups')),
+  restore: (id: number) => api.post(`/admin/backups/${id}/restore`),
+  remove: (id: number) => api.delete(`/admin/backups/${id}`),
+  downloadUrl: (id: number) => `/admin/backups/${id}/download`,
+}
