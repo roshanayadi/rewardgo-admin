@@ -191,3 +191,16 @@ export const backupsApi = {
   remove: (id: number) => api.delete(`/admin/backups/${id}`),
   downloadUrl: (id: number) => `/admin/backups/${id}/download`,
 }
+
+/* API monitoring */
+export const apiMonitorApi = {
+  overview: (hours = 24) =>
+    unwrap<Record<string, number>>(api.get('/admin/api-monitor/overview', { params: { hours } })),
+  endpoints: (hours = 24) =>
+    unwrap<any[]>(api.get('/admin/api-monitor/endpoints', { params: { hours } })),
+  requests: (params?: ListParams & { filter?: string }) =>
+    unwrapList<any>(api.get('/admin/api-monitor/requests', { params })),
+  timeline: (hours = 24) =>
+    unwrap<any[]>(api.get('/admin/api-monitor/timeline', { params: { hours } })),
+  prune: () => api.post('/admin/api-monitor/prune'),
+}

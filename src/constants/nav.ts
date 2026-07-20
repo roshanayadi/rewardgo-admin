@@ -21,6 +21,7 @@ import {
   ScrollText,
   ShieldAlert,
   DatabaseBackup,
+  Activity,
   Share2,
   LifeBuoy,
   Trophy,
@@ -67,6 +68,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Fraud Detection', to: '/fraud', icon: ShieldAlert, permission: 'users.view', group: 'System' },
   { label: 'Audit Logs', to: '/audit-logs', icon: ScrollText, permission: 'system.view', group: 'System' },
   { label: 'Backups', to: '/backups', icon: DatabaseBackup, permission: 'system.view', group: 'System' },
+  { label: 'API Monitor', to: '/api-monitor', icon: Activity, permission: 'system.view', group: 'System' },
 ]
 
 export const NAV_GROUPS = ['Main', 'Management', 'Earning', 'Finance', 'Content', 'Insights', 'System']

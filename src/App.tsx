@@ -36,6 +36,7 @@ const SystemPage = lazy(() => import('@/pages/System/SystemPage'))
 const AuditLogsPage = lazy(() => import('@/pages/AuditLogs/AuditLogsPage'))
 const FraudPage = lazy(() => import('@/pages/Fraud/FraudPage'))
 const BackupsPage = lazy(() => import('@/pages/Backups/BackupsPage'))
+const ApiMonitorPage = lazy(() => import('@/pages/ApiMonitor/ApiMonitorPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 function PageLoader() {
@@ -101,6 +102,7 @@ export default function App() {
             <Route path="/audit-logs" element={<AuditLogsPage />} />
             <Route path="/fraud" element={<FraudPage />} />
             <Route path="/backups" element={<BackupsPage />} />
+            <Route path="/api-monitor" element={<ApiMonitorPage />} />
           </Route>
         </Route>
 
