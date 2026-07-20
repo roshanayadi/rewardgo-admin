@@ -98,8 +98,16 @@ export default function CountriesPage() {
             {(countries ?? []).map((c: Country) => (
               <tr key={c.id} className="border-t border-slate-100 dark:border-slate-800">
                 <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">{c.flag ?? '🌐'}</span>
+                  <div className="flex items-center gap-2.5">
+                    {/* Real flag image — emoji flags don't render on Windows */}
+                    <img
+                      src={`https://flagcdn.com/w40/${c.code.toLowerCase()}.png`}
+                      srcSet={`https://flagcdn.com/w80/${c.code.toLowerCase()}.png 2x`}
+                      alt={c.code}
+                      className="h-5 w-7 rounded-sm border border-slate-100 object-cover dark:border-slate-700"
+                      loading="lazy"
+                      onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
+                    />
                     <span className="font-medium">{c.name}</span>
                   </div>
                 </td>
