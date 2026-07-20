@@ -1,24 +1,50 @@
-import { useQuery } from '@tanstack/react-query'
-import { Server, Database, Zap, RefreshCw } from 'lucide-react'
-import { systemApi } from '@/api/services'
+import { useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import { Server, Database, Zap, RefreshCw, Trash2, Construction, Clock, HardDriveDownload } from 'lucide-react'
+import { systemApi, systemToolsApi } from '@/api/services'
 import { PageHeader } from '@/components/common/PageHeader'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Badge, StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
-import { formatNumber } from '@/lib/utils'
+import { Switch } from '@/components/ui/Switch'
+import { ConfirmDialog } from '@/components/common/ConfirmDialog'
+import { formatNumber, formatDateTime } from '@/lib/utils'
 
 export default function SystemPage() {
+  const queryClient = useQueryClient()
   const health = useQuery({ queryKey: ['system', 'health'], queryFn: systemApi.health, refetchInterval: 30000 })
   const stats = useQuery({ queryKey: ['system', 'stats'], queryFn: systemApi.statistics })
   const logs = useQuery({ queryKey: ['system', 'logs'], queryFn: () => systemApi.logs(80) })
+  const status = useQuery({ queryKey: ['system', 'status'], queryFn: systemToolsApi.status, refetchInterval: 30000 })
+
+  const [confirmMaintenance, setConfirmMaintenance] = useState(false)
+
+  const cacheMutation = useMutation({
+    mutationFn: systemToolsApi.clearCache,
+    onSuccess: () => toast.success('All caches cleared'),
+    onError: () => toast.error('Cache clear failed (super-admin only)'),
+  })
+
+  const maintenanceMutation = useMutation({
+    mutationFn: (enabled: boolean) => systemToolsApi.maintenance(enabled),
+    onSuccess: () => {
+      setConfirmMaintenance(false)
+      queryClient.invalidateQueries({ queryKey: ['system', 'status'] })
+      toast.success('Maintenance mode updated')
+    },
+    onError: () => toast.error('Failed (super-admin only)'),
+  })
+
+  const inMaintenance = !!status.data?.maintenance
 
   return (
     <div>
       <PageHeader
         title="System"
-        subtitle="Health, statistics & logs"
+        subtitle="Health, statistics, tools & logs"
         actions={
-          <Button variant="secondary" onClick={() => { health.refetch(); logs.refetch() }}>
+          <Button variant="secondary" onClick={() => { health.refetch(); logs.refetch(); status.refetch() }}>
             <RefreshCw className="h-4 w-4" /> Refresh
           </Button>
         }
@@ -63,6 +89,83 @@ export default function SystemPage() {
         </Card>
       </div>
 
+      {/* Tools */}
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>System Tools</CardTitle>
+          <Badge tone="gray">super-admin</Badge>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            {/* Maintenance mode */}
+            <div className="flex items-center justify-between rounded-xl border border-slate-100 p-4 dark:border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${inMaintenance ? 'bg-red-50 text-red-600' : 'bg-slate-50 text-slate-500'}`}>
+                  <Construction className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Maintenance Mode</p>
+                  <p className="text-xs text-slate-400">
+                    {inMaintenance ? 'App is OFFLINE for users' : 'App is live'}
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={inMaintenance}
+                onCheckedChange={(v) => (v ? setConfirmMaintenance(true) : maintenanceMutation.mutate(false))}
+              />
+            </div>
+
+            {/* Cache manager */}
+            <div className="flex items-center justify-between rounded-xl border border-slate-100 p-4 dark:border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+                  <Trash2 className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Cache Manager</p>
+                  <p className="text-xs text-slate-400">
+                    Driver: {status.data?.cache_driver ?? '—'}
+                  </p>
+                </div>
+              </div>
+              <Button size="sm" variant="secondary" onClick={() => cacheMutation.mutate()} loading={cacheMutation.isPending}>
+                Clear All
+              </Button>
+            </div>
+
+            {/* Cron status */}
+            <div className="flex items-center justify-between rounded-xl border border-slate-100 p-4 dark:border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${status.data?.cron_healthy ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
+                  <Clock className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Cron Scheduler</p>
+                  <p className="text-xs text-slate-400">
+                    {status.data?.cron_last_run
+                      ? `Last run ${formatDateTime(status.data.cron_last_run)}`
+                      : 'Never ran — add schedule:run to cron'}
+                  </p>
+                </div>
+              </div>
+              <Badge tone={status.data?.cron_healthy ? 'green' : 'red'}>
+                {status.data?.cron_healthy ? 'Healthy' : 'Stale'}
+              </Badge>
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-4 text-xs text-slate-400">
+            <span className="flex items-center gap-1.5">
+              <HardDriveDownload className="h-3.5 w-3.5" />
+              Last backup: {status.data?.last_backup_at ? formatDateTime(status.data.last_backup_at) : 'never'}
+            </span>
+            <span>Queue: {status.data?.queue_driver ?? '—'}</span>
+            <span>API logs: {formatNumber(status.data?.api_logs_count ?? 0)} rows</span>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Stats */}
       <Card className="mt-6">
         <CardHeader>
@@ -92,6 +195,15 @@ export default function SystemPage() {
           </pre>
         </CardContent>
       </Card>
+
+      <ConfirmDialog
+        open={confirmMaintenance}
+        onOpenChange={setConfirmMaintenance}
+        title="Enable maintenance mode?"
+        description="The app and API will return 503 for ALL users until you switch it back off. The admin panel keeps working."
+        onConfirm={() => maintenanceMutation.mutate(true)}
+        loading={maintenanceMutation.isPending}
+      />
     </div>
   )
 }

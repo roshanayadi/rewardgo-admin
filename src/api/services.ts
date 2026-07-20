@@ -213,3 +213,10 @@ export const countriesApi = {
     unwrap<any>(api.put(`/admin/countries/${id}`, payload)),
   remove: (id: number) => api.delete(`/admin/countries/${id}`),
 }
+
+/* Extended system tools */
+export const systemToolsApi = {
+  status: () => unwrap<any>(api.get('/admin/system/status')),
+  clearCache: () => api.post('/admin/system/cache-clear'),
+  maintenance: (enabled: boolean) => api.post('/admin/system/maintenance', { enabled }),
+}
